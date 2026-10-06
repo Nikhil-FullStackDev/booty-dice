@@ -32,19 +32,8 @@ function setSession(r) { session = { code: r.code, token: r.token }; localStorag
 const dieImg = f => `<img src="img/dice-face-${IMG[f]}.png" alt="${FACE_NAME[f]}" draggable="false">`;
 const die = (f, cls = '', attrs = '') => `<div class="die ${f ? '' : 'blank'} ${cls}" ${f ? `title="${FACE_NAME[f]}"` : ''} ${attrs}>${f ? dieImg(f) : ''}</div>`;
 
-const REF = [
-  ['D', 'Doubloon', 'Take 2 Doubloons from the Buried Treasure.'],
-  ['X', 'X Marks the Spot', 'Give 2 of yer Doubloons to the Buried Treasure.'],
-  ['J', 'Jolly Roger', 'Steal 2 Doubloons: both from one pirate, or 1 from two.'],
-  ['C', 'Cutlass', 'Attack a pirate: they lose a Shield, or a Life if they have none.'],
-  ['W', 'Walk the Plank', 'Lose 1 Life. Shields do not help!'],
-  ['S', 'Shield', 'Take a Shield from the War Chest. Blocks Cutlasses only.'],
-];
-const refHtml = () => `<div class="ref">${REF.map(([f, n, t]) => `${dieImg(f)}<div><b>${n}:</b> ${t}</div>`).join('')}
-  <div class="combo"><b>MUTINY</b> (3+ Walk the Planks): all other pirates lose 1 Life, +1 for each extra plank. You lose none.</div>
-  <div class="combo"><b>SHIPWRECK</b> (3+ X): all other pirates give 3 Doubloons to the Buried Treasure, +1 for each extra X.</div>
-  <div class="combo"><b>BLACKBEARD'S CURSE</b> (one of every face): all others lose 2 Lives and give 5 Doubloons.</div>
-  <div class="combo"><b>CAPTAIN'S PLUNDER:</b> eliminate a pirate on your turn and take ALL their Doubloons.</div></div>`;
+const refHtml = () => `<img class="rollcard" src="img/roll-card.png" alt="Dice roll card: what each die and combination does" width="432" height="486">
+  <p class="plunder"><b>CAPTAIN'S PLUNDER:</b> eliminate a pirate on your turn (Cutlass, Mutiny or Blackbeard's Curse) and take ALL their Doubloons!</p>`;
 
 const rules = () => `<div class="rules"><h3>HOW TO PLAY</h3>
   <p>Everyone starts with <b>10 Lives</b> and <b>5 Doubloons</b>. Be the first to hold <b>25 Doubloons</b>, or be the last pirate alive.</p>

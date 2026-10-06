@@ -52,6 +52,8 @@ h1 { margin: 0; text-align: center; font-family: Georgia, "Times New Roman", ser
 .rules h3 { margin: 0 0 8px; font-family: Georgia, serif; letter-spacing: .08em; }
 .rules h3.sub { margin-top: 14px; }
 .rules p { margin: 0 0 6px; }
+.rules .rollcard { display: block; width: 100%; max-width: 432px; height: auto; margin: 0 auto 8px; border-radius: 14px; }
+.rules .plunder { font-size: 13px; margin: 6px 0 0; }
 .rules .ref { display: grid; grid-template-columns: 34px 1fr; gap: 6px 10px; align-items: center; }
 .rules .ref img { width: 34px; height: 34px; border-radius: 7px; }
 .rules .combo { grid-column: 1 / -1; font-size: 13px; }
