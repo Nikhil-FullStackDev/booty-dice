@@ -135,12 +135,11 @@ function tableHtml(g, s) {
     actions = g.rolls === 0 ? '<button class="primary" id="roll">🎲 Roll dice</button>'
       : `<button class="primary" id="roll" ${keep.size ? '' : 'disabled'}>${keep.size ? `Re-roll ${keep.size} ${keep.size === 1 ? 'die' : 'dice'}` : 'Select dice to re-roll'}</button><button id="stop">Stop &amp; resolve</button>`;
   }
-  const lines = (g.phase === 'result' || g.phase === 'over' ? (g.result ? g.result.lines : []) : g.turnLog).concat();
   const timer = g.phase === 'result' ? `<div class="timer"><i style="animation-duration:${g.untilIn}ms"></i></div>` : '';
   return `<div class="table"><div class="head ${cls}">${head}</div>
     ${g.phase === 'roll' && !g.rolls ? '' : pips}
     ${banner}${shown ? `<div class="dicerow">${dice}</div>` : ''}${actions ? `<div class="actions">${actions}</div>` : ''}
-    ${timer}<ul class="log">${(lines.length ? lines : g.log.slice(-2)).map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`;
+    ${timer}</div>`;
 }
 
 function game() {
@@ -150,9 +149,10 @@ function game() {
   const opps = Array.from({ length: n - 1 }, (_, k) => g.players[(s.you + 1 + k) % n]);
   const over = g.phase === 'over';
   $app.innerHTML = `<div class="game">
-    <div class="bar"><span class="title">BOOTY DICE</span><span class="meta">Room ${s.code} · Turn ${g.turns}</span>
-      ${s.voice ? `<a href="${esc(s.voice)}" target="_blank" rel="noopener noreferrer"><button>🎙 Voice</button></a>` : ''}
-      <button id="ref">Dice guide</button><button id="leave">Leave</button></div>
+    <header class="bar"><div class="brand">BOOTY DICE</div>
+      <div class="btns">${s.voice ? `<a href="${esc(s.voice)}" target="_blank" rel="noopener noreferrer"><button title="Voice chat">🎙 Voice</button></a>` : ''}
+        <button id="ref" class="${showRef ? 'on' : ''}">📜 Guide</button><button id="leave">Leave</button></div>
+      <div class="chips"><span class="chip">Room <b>${s.code}</b></span><span class="chip">Turn <b>${g.turns}</b></span></div></header>
     <div class="pools"><span><img src="img/doubloon-token.png" alt="">Buried Treasure: ${g.treasure}</span><span><img src="img/shield-token.png" alt="">War Chest: ${g.chest}</span></div>
     <div class="opps">${opps.map(p => matHtml(p, g, s)).join('')}</div>
     ${tableHtml(g, s)}
