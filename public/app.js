@@ -119,14 +119,15 @@ function tableHtml(g, s) {
   } else if (g.phase === 'result') head = `${nm(g.turn)} ${g.turn === s.you ? 'resolve' : 'resolves'} the dice`;
   else if (g.phase === 'over') { head = `🏆 ${nm(g.winner)} win${g.winner === s.you ? '' : 's'}!`; cls = 'good'; }
 
-  const shown = g.phase === 'roll';
+  const shown = true;
   const T = g.target && ACTION[g.target.kind];
   const banner = T ? `<div class="action">${die(T.face)}<div><b>${T.name}</b><br>${myTurn ? T.you : esc(P(g.turn).name) + ' is choosing…'}${g.target.left > 1 ? ` <span class="dim">(${g.target.left} left)</span>` : ''}</div></div>` : '';
   const canKeep = myTurn && g.phase === 'roll' && g.rolls > 0 && g.rolls < 3;
   const dice = g.dice.map((f, i) => {
     const cls = canKeep ? (keep.has(i) ? 'reroll' : '') : (g.held[i] ? 'kept' : '');
     const roll = rolledFresh && f && !g.held[i] ? 'roll' : '';
-    return die(f, `${cls} ${canKeep ? 'pick' : ''} ${roll}`, canKeep ? `data-keep="${i}"` : '');
+    const dim = g.phase === 'target' && g.target && f !== ACTION[g.target.kind].face ? 'dim' : '';
+    return die(f, `${cls} ${dim} ${canKeep ? 'pick' : ''} ${roll}`, canKeep ? `data-keep="${i}"` : '');
   }).join('');
   const pips = `<div class="rollpips">${[0, 1, 2].map(i => `<span class="pip ${i < g.rolls ? 'on' : ''}"></span>`).join('')} ${g.rolls}/3 rolls</div>`;
 
@@ -138,7 +139,7 @@ function tableHtml(g, s) {
   const timer = g.phase === 'result' ? `<div class="timer"><i style="animation-duration:${g.untilIn}ms"></i></div>` : '';
   return `<div class="table"><div class="head ${cls}">${head}</div>
     ${g.phase === 'roll' && !g.rolls ? '' : pips}
-    ${banner}${shown ? `<div class="dicerow">${dice}</div>` : ''}${actions ? `<div class="actions">${actions}</div>` : ''}
+    ${shown ? `<div class="dicerow">${dice}</div>` : ''}${banner}${actions ? `<div class="actions">${actions}</div>` : ''}
     ${timer}</div>`;
 }
 
