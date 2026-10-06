@@ -52,7 +52,14 @@ h1 { margin: 0; text-align: center; font-family: Georgia, "Times New Roman", ser
 .rules h3 { margin: 0 0 8px; font-family: Georgia, serif; letter-spacing: .08em; }
 .rules h3.sub { margin-top: 14px; }
 .rules p { margin: 0 0 6px; }
-.rules .rollcard { display: block; width: 100%; max-width: 432px; height: auto; margin: 0 auto 8px; border-radius: 14px; }
+.rollcard { display: flex; flex-direction: column; gap: 10px; background: #e6cf98 url(img/parchment.jpg) center / cover; border-radius: 18px; padding: 14px 12px; color: #2b1d0c; font-family: Georgia, "Times New Roman", serif; font-size: 13.5px; line-height: 1.3; box-shadow: inset 0 0 18px rgba(120,80,20,.35); }
+.rc { display: flex; gap: 8px; align-items: center; }
+.rc.combo { align-items: flex-start; }
+.rc p { margin: 0; flex: 1; }
+.rc b { font-variant: small-caps; font-weight: 800; letter-spacing: .02em; }
+.ics { display: flex; flex-wrap: wrap; gap: 3px; width: 44px; flex: none; }
+.rc.combo .ics { width: 132px; }
+.ics img { width: 40px; height: 40px; image-rendering: pixelated; }
 .rules .plunder { font-size: 13px; margin: 6px 0 0; }
 .rules .ref { display: grid; grid-template-columns: 34px 1fr; gap: 6px 10px; align-items: center; }
 .rules .ref img { width: 34px; height: 34px; border-radius: 7px; }

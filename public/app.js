@@ -32,8 +32,20 @@ function setSession(r) { session = { code: r.code, token: r.token }; localStorag
 const dieImg = f => `<img src="img/dice-face-${IMG[f]}.png" alt="${FACE_NAME[f]}" draggable="false">`;
 const die = (f, cls = '', attrs = '') => `<div class="die ${f ? '' : 'blank'} ${cls}" ${f ? `title="${FACE_NAME[f]}"` : ''} ${attrs}>${f ? dieImg(f) : ''}</div>`;
 
-const refHtml = () => `<img class="rollcard" src="img/roll-card.png" alt="Dice roll card: what each die and combination does" width="432" height="486">
-  <p class="plunder"><b>CAPTAIN'S PLUNDER:</b> eliminate a pirate on your turn (Cutlass, Mutiny or Blackbeard's Curse) and take ALL their Doubloons!</p>`;
+const icons = fs => `<span class="ics">${[...fs].map(f => `<img src="img/dice-face-${IMG[f]}.png" alt="${FACE_NAME[f]}" draggable="false">`).join('')}</span>`;
+const CARD = [
+  ['D', 'Doubloon', 'Take 2 Doubloons from the Buried Treasure.'],
+  ['X', 'X Marks the Spot', 'Give 2 of yer Doubloons to the Buried Treasure.'],
+  ['J', 'Jolly Roger', 'Steal 2 Doubloons from other pirates.'],
+  ['C', 'Cutlass', 'Attack a pirate!'],
+  ['W', 'Walk the Plank', 'Lose 1 of yer Lives to Davey Jones’ Locker.'],
+  ['S', 'Shield', 'Take a Shield from the War Chest.'],
+  ['WWW', 'Mutiny', 'Blimey! All other pirates lose a Life to Davey Jones’s Locker. For each additional Walk The Plank rolled, pirates lose an additional Life.'],
+  ['XXX', 'Shipwreck', 'Avast! All other pirates give 3 Doubloons to the Buried Treasure. For each additional X Marks the Spot, pirates give an additional Doubloon.'],
+  ['XJWDCS', 'Blackbeard’s Curse', 'Argghhh! All other pirates lose 2 Lives to Davey Jones’s Locker and give 5 Doubloons to The Buried Treasure.'],
+];
+const refHtml = () => `<div class="rollcard">${CARD.map(([f, n, t]) => `<div class="rc ${f.length > 1 ? 'combo' : ''}">${icons(f)}<p><b>${n}:</b> ${t}</p></div>`).join('')}</div>
+  <p class="plunder"><b>CAPTAIN’S PLUNDER:</b> eliminate a pirate on your turn (Cutlass, Mutiny or Blackbeard’s Curse) and take ALL their Doubloons!</p>`;
 
 const rules = () => `<div class="rules"><h3>HOW TO PLAY</h3>
   <p>Everyone starts with <b>10 Lives</b> and <b>5 Doubloons</b>. Be the first to hold <b>25 Doubloons</b>, or be the last pirate alive.</p>
