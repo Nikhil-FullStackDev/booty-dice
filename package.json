@@ -1,0 +1,8 @@
+{
+  "name": "booty-dice-online",
+  "version": "1.0.0",
+  "description": "Booty Dice pirate dice game: online rooms with friends and AI bots",
+  "scripts": { "start": "node server.js", "test": "node --test" },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
