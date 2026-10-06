@@ -32,6 +32,9 @@ input { background: #0a1217; border: 1px solid var(--line); border-radius: 8px; 
 .die.pick:hover { transform: translateY(-4px); }
 .die.kept { box-shadow: 0 0 0 4px var(--gold), 0 6px 14px rgba(0,0,0,.6); transform: translateY(-6px); }
 .die.kept::after { content: "KEEP"; position: absolute; left: 50%; bottom: -19px; transform: translateX(-50%); font-size: 10px; font-weight: 800; letter-spacing: .1em; color: var(--gold); }
+.die.reroll { box-shadow: 0 0 0 4px #5ec8ff, 0 6px 14px rgba(0,0,0,.6); transform: translateY(-6px); }
+.die.reroll::after { content: "RE-ROLL"; position: absolute; left: 50%; bottom: -19px; transform: translateX(-50%); font-size: 10px; font-weight: 800; letter-spacing: .08em; color: #5ec8ff; white-space: nowrap; }
+.action { display: flex; align-items: center; gap: 12px; background: #0a1217; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; max-width: 420px; --die: 52px; }
 .die.roll { animation: tumble .55s ease-out; }
 @keyframes tumble { 0% { transform: rotate(-200deg) scale(.5); opacity: .2; } 60% { transform: rotate(18deg) scale(1.1); opacity: 1; } 100% { transform: none; } }
 

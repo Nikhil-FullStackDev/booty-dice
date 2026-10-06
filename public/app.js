@@ -32,6 +32,10 @@ function setSession(r) { session = { code: r.code, token: r.token }; localStorag
 const dieImg = f => `<img src="img/dice-face-${IMG[f]}.png" alt="${FACE_NAME[f]}" draggable="false">`;
 const die = (f, cls = '', attrs = '') => `<div class="die ${f ? '' : 'blank'} ${cls}" ${f ? `title="${FACE_NAME[f]}"` : ''} ${attrs}>${f ? dieImg(f) : ''}</div>`;
 
+const ACTION = {
+  cut: { face: 'C', name: 'Cutlass attack', you: 'Tap a pirate to attack: they lose a Shield, or a Life if they have none.' },
+  steal: { face: 'J', name: 'Jolly Roger', you: 'Tap a pirate to steal 1 Doubloon from.' },
+};
 const icons = fs => `<span class="ics">${[...fs].map(f => `<img src="img/dice-face-${IMG[f]}.png" alt="${FACE_NAME[f]}" draggable="false">`).join('')}</span>`;
 const CARD = [
   ['D', 'Doubloon', 'Take 2 Doubloons from the Buried Treasure.'],
@@ -109,33 +113,33 @@ function tableHtml(g, s) {
   const P = i => g.players[i], nm = i => (i === s.you ? 'You' : esc(P(i).name));
   const myTurn = g.waiting.includes(s.you);
   let head = '', cls = '';
-  if (g.phase === 'roll') head = myTurn ? (g.rolls ? 'Keep dice, then roll again — or stop' : 'Your turn — roll the dice!') : `${nm(g.turn)} ${g.rolls ? 'is deciding' : 'is rolling'}…`;
+  if (g.phase === 'roll') head = myTurn ? (g.rolls ? 'Tap the dice you want to re-roll — or stop' : 'Your turn — roll the dice!') : `${nm(g.turn)} ${g.rolls ? 'is deciding' : 'is rolling'}…`;
   else if (g.phase === 'target') {
-    const k = g.target.kind === 'steal' ? 'steal a doubloon from' : 'attack';
-    head = myTurn ? `Tap a pirate to ${k}` : `${nm(g.turn)} is choosing who to ${k}…`;
+    head = myTurn ? 'Choose your target' : `${nm(g.turn)} is choosing a target…`;
   } else if (g.phase === 'result') head = `${nm(g.turn)} ${g.turn === s.you ? 'resolve' : 'resolves'} the dice`;
   else if (g.phase === 'over') { head = `🏆 ${nm(g.winner)} win${g.winner === s.you ? '' : 's'}!`; cls = 'good'; }
 
-  const shown = g.phase === 'roll' || g.phase === 'target' || g.phase === 'result' || g.phase === 'over';
+  const shown = g.phase === 'roll';
+  const T = g.target && ACTION[g.target.kind];
+  const banner = T ? `<div class="action">${die(T.face)}<div><b>${T.name}</b><br>${myTurn ? T.you : esc(P(g.turn).name) + ' is choosing…'}${g.target.left > 1 ? ` <span class="dim">(${g.target.left} left)</span>` : ''}</div></div>` : '';
   const canKeep = myTurn && g.phase === 'roll' && g.rolls > 0 && g.rolls < 3;
   const dice = g.dice.map((f, i) => {
-    const kept = canKeep ? keep.has(i) : g.held[i];
+    const cls = canKeep ? (keep.has(i) ? 'reroll' : '') : (g.held[i] ? 'kept' : '');
     const roll = rolledFresh && f && !g.held[i] ? 'roll' : '';
-    return die(f, `${kept ? 'kept' : ''} ${canKeep ? 'pick' : ''} ${roll}`, canKeep ? `data-keep="${i}"` : '');
+    return die(f, `${cls} ${canKeep ? 'pick' : ''} ${roll}`, canKeep ? `data-keep="${i}"` : '');
   }).join('');
   const pips = `<div class="rollpips">${[0, 1, 2].map(i => `<span class="pip ${i < g.rolls ? 'on' : ''}"></span>`).join('')} ${g.rolls}/3 rolls</div>`;
 
   let actions = '';
   if (myTurn && g.phase === 'roll') {
     actions = g.rolls === 0 ? '<button class="primary" id="roll">🎲 Roll dice</button>'
-      : `<button class="primary" id="roll">Re-roll ${6 - keep.size} dice</button><button id="stop">Stop &amp; resolve</button>`;
-    if (g.rolls && keep.size === 6) actions = '<button class="primary" id="stop">Stop &amp; resolve</button>';
+      : `<button class="primary" id="roll" ${keep.size ? '' : 'disabled'}>${keep.size ? `Re-roll ${keep.size} ${keep.size === 1 ? 'die' : 'dice'}` : 'Select dice to re-roll'}</button><button id="stop">Stop &amp; resolve</button>`;
   }
   const lines = (g.phase === 'result' || g.phase === 'over' ? (g.result ? g.result.lines : []) : g.turnLog).concat();
   const timer = g.phase === 'result' ? `<div class="timer"><i style="animation-duration:${g.untilIn}ms"></i></div>` : '';
   return `<div class="table"><div class="head ${cls}">${head}</div>
     ${g.phase === 'roll' && !g.rolls ? '' : pips}
-    <div class="dicerow">${shown ? dice : ''}</div>${actions ? `<div class="actions">${actions}</div>` : ''}
+    ${banner}${shown ? `<div class="dicerow">${dice}</div>` : ''}${actions ? `<div class="actions">${actions}</div>` : ''}
     ${timer}<ul class="log">${(lines.length ? lines : g.log.slice(-2)).map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`;
 }
 
@@ -161,7 +165,7 @@ function game() {
   document.querySelectorAll('[data-keep]').forEach(el => el.onclick = () => { const i = +el.dataset.keep; keep.has(i) ? keep.delete(i) : keep.add(i); rolledFresh = false; game(); });
   document.querySelectorAll('[data-target]').forEach(el => el.onclick = () => move({ type: 'target', target: +el.dataset.target }));
   document.querySelectorAll('[data-tobot]').forEach(el => el.onclick = e => { e.stopPropagation(); send('replace', { index: +el.dataset.tobot }); });
-  if ($('roll')) $('roll').onclick = () => move({ type: 'roll', hold: [...keep] });
+  if ($('roll')) $('roll').onclick = () => move({ type: 'roll', hold: [0, 1, 2, 3, 4, 5].filter(i => !keep.has(i)) });
   if ($('stop')) $('stop').onclick = () => move({ type: 'stop' });
   if ($('again')) $('again').onclick = () => send('restart', {});
   if ($('tolobby')) $('tolobby').onclick = () => send('lobby', {});
