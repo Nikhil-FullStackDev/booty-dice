@@ -226,5 +226,11 @@ setInterval(() => {
   rooms.forEach((r, c) => { if (!r.streams.size && now - r.touched > 2 * 3600e3) { clearTimeout(r.botTimer); rooms.delete(c); } });
 }, 600e3).unref();
 
+// Render sends SIGTERM on redeploy/restart: stop accepting, drop open streams, exit promptly.
+process.on('SIGTERM', () => {
+  server.close(() => process.exit(0));
+  server.closeAllConnections?.();
+  setTimeout(() => process.exit(0), 3000).unref();
+});
 if (require.main === module) server.listen(PORT, HOST, () => console.log(`Booty Dice on http://localhost:${PORT}`));
 module.exports = server;
