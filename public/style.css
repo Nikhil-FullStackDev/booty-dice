@@ -134,3 +134,21 @@ h1 { margin: 0; text-align: center; font-family: Georgia, "Times New Roman", ser
   .lobbywrap { padding-top: 3vh; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- mobile polish ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+img { max-width: 100%; }
+@media (pointer: coarse) {
+  button, .btn, select { min-height: 44px; touch-action: manipulation; }
+  input, .field { font-size: 16px; min-height: 44px; } /* >=16px stops iOS zoom-on-focus */
+}
+@media (pointer: coarse) { .plist button, .btns button { min-height: 40px; padding: 6px 12px; } }
+@media (max-width: 380px) {
+  :root { --die: 48px; }
+  .dicerow { gap: 16px 10px; }
+  .me .mat { width: 100%; }
+  .actions button { padding: 10px 14px; }
+  .rules { padding: 14px; }
+}
+@media (max-height: 480px) and (orientation: landscape) { .game { padding-top: 4px; gap: 6px; } }
