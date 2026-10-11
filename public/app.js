@@ -181,3 +181,22 @@ function render() {
 
 if (session) connect();
 render();
+
+// "Your time is running out" badge: only the player the table is waiting on sees it, for the last 30 seconds.
+(function idleBadge(getSnap) {
+  const el = document.createElement('div');
+  el.id = 'idlebadge'; el.setAttribute('role', 'status'); el.hidden = true;
+  el.style.cssText = 'position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:50;padding:6px 14px;border-radius:99px;background:#000c;color:#fff;font:600 14px system-ui,sans-serif;pointer-events:none;white-space:nowrap';
+  document.body.appendChild(el);
+  let last = null, t0 = 0;
+  setInterval(() => {
+    const s = getSnap();
+    if (s !== last) { last = s; t0 = Date.now(); }
+    const ms = s && s.idleMsLeft != null ? s.idleMsLeft - (Date.now() - t0) : null;
+    if (ms == null || ms > 30000) { el.hidden = true; return; }
+    const sec = Math.max(0, Math.ceil(ms / 1000));
+    el.hidden = false;
+    el.textContent = sec ? `\u23f1 ${sec}s to move, then a bot plays for you` : '\u23f1 Time is up: a bot is playing for you';
+    el.style.background = sec <= 10 ? '#b3262ecc' : '#000c';
+  }, 500);
+})(() => snap);
