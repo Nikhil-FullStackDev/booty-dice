@@ -62,7 +62,7 @@ function makeCode() {
 const cleanName = n => String(n || '').replace(/[^\w \-']/g, '').trim().slice(0, 14) || 'Player';
 
 function newRoom(hostName) {
-  const room = { code: makeCode(), players: [], state: null, streams: new Map(), touched: Date.now(), botTimer: null, voice: '', strikes: new Map(), away: new Set(), idleKey: '', idleSince: Date.now(), lastAct: 0 };
+  const room = { code: makeCode(), players: [], state: null, streams: new Map(), touched: Date.now(), botTimer: null, strikes: new Map(), away: new Set(), idleKey: '', idleSince: Date.now(), lastAct: 0 };
   addPlayer(room, hostName, false);
   rooms.set(room.code, room);
   return room;
@@ -75,7 +75,7 @@ function addPlayer(room, name, bot) {
 
 function snapshot(room, idx) {
   return {
-    code: room.code, you: idx, host: idx === 0, voice: room.voice,
+    code: room.code, you: idx, host: idx === 0,
     idleMsLeft: idleLeft(room, idx),
     lobby: room.players.map((p, i) => ({ name: p.name, bot: p.bot, connected: p.bot || room.streams.has(i), color: Booty.COLORS[i] })),
     game: room.state ? Booty.view(room.state, idx) : null,
@@ -233,12 +233,6 @@ async function api(req, res, url) {
     if (!p || p.bot || i === 0) return json(res, 400, { error: 'Cannot replace' });
     p.bot = true; p.token = null; p.name += ' (bot)';
     if (room.state) room.state.players[i].bot = true, room.state.players[i].name = p.name;
-  } else if (url.pathname === '/api/settings') {
-    if (b.voice !== undefined) {
-      const v = String(b.voice).trim().slice(0, 300);
-      if (v && !/^https?:\/\/[^\s]+$/i.test(v)) return json(res, 400, { error: 'Voice link must start with http(s)://' });
-      room.voice = v;
-    }
   } else if (url.pathname === '/api/lobby') { // back to lobby after game
     clearTimeout(room.botTimer);
     room.state = null;
