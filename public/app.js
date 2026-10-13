@@ -73,7 +73,6 @@ function home() {
   $('code').onkeydown = e => { if (e.key === 'Enter') $('join').click(); };
 }
 
-const voiceBtn = s => (s.voice ? `<a href="${esc(s.voice)}" target="_blank" rel="noopener noreferrer"><button style="width:100%">🎙 Join voice chat</button></a>` : '');
 
 function lobby() {
   const s = snap, n = s.lobby.length;
@@ -81,8 +80,7 @@ function lobby() {
     <div class="code">${s.code}</div>
     <ul class="plist">${s.lobby.map((p, i) => `<li style="--c:${p.color}"><span class="dot"></span><span class="nm">${esc(p.name)}${i === s.you ? ' (you)' : ''}${i === 0 ? ' ★' : ''}</span>
       <span class="dim">${p.connected ? '' : 'offline'}</span>${s.host && i > 0 ? `<button data-kick="${i}">Remove</button>` : ''}</li>`).join('')}</ul>
-    ${voiceBtn(s)}
-    ${s.host ? `<div class="row"><input id="voice" placeholder="Voice chat link (Discord / Meet…)" value="${esc(s.voice)}"><button id="setvoice" style="flex:none">Set</button></div>
+    ${s.host ? `
       <div class="row"><button id="bot" ${n >= 6 ? 'disabled' : ''}>+ Add bot</button>
       <button class="primary" id="start" ${n < 2 ? 'disabled' : ''}>Start game</button></div>
       ${n < 2 ? '<div class="dim" style="text-align:center">Need at least 2 pirates — add a bot to fill a seat.</div>' : ''}`
@@ -90,7 +88,6 @@ function lobby() {
     <div class="row"><button id="leave">Leave</button></div></div>${rules()}</div>`;
   $('leave').onclick = () => { leave(); render(); };
   if (s.host) {
-    $('setvoice').onclick = () => send('settings', { voice: $('voice').value });
     $('bot').onclick = () => send('addbot', {});
     $('start').onclick = () => send('start', {});
     document.querySelectorAll('[data-kick]').forEach(b => b.onclick = () => send('kick', { index: +b.dataset.kick }));
@@ -151,7 +148,7 @@ function game() {
   const over = g.phase === 'over';
   $app.innerHTML = `<div class="game">
     <header class="bar"><div class="brand">BOOTY DICE</div>
-      <div class="btns">${s.voice ? `<a href="${esc(s.voice)}" target="_blank" rel="noopener noreferrer"><button title="Voice chat">🎙 Voice</button></a>` : ''}
+      <div class="btns">
         <button id="ref" class="${showRef ? 'on' : ''}">📜 Guide</button><button id="leave">Leave</button></div>
       <div class="chips"><span class="chip">Room <b>${s.code}</b></span><span class="chip">Turn <b>${g.turns}</b></span></div></header>
     <div class="pools"><span><img src="img/doubloon-token.png" alt="">Buried Treasure: ${g.treasure}</span><span><img src="img/shield-token.png" alt="">War Chest: ${g.chest}</span></div>
