@@ -197,3 +197,6 @@ render();
     el.style.background = sec <= 10 ? '#b3262ecc' : '#000c';
   }, 500);
 })(() => snap);
+
+// In-room chat with emotes (shared chat.js).
+if (window.Chat) Chat.useSSE({ session: () => session, bottom: 84 });
