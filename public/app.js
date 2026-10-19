@@ -25,6 +25,10 @@ function connect() {
   es.onmessage = e => { snap = JSON.parse(e.data); render(); };
   es.onerror = () => { if (es.readyState === EventSource.CLOSED) { leave(); lastErr = 'Room closed (the server may have restarted).'; render(); } };
 }
+// Reconnect at once when the page wakes (phone unlocked, network back) instead of waiting for the browser's retry.
+const wake = () => { if (session && (!es || es.readyState !== 1)) connect(); };
+document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+addEventListener('online', wake); addEventListener('pageshow', wake);
 function leave() { if (es) es.close(); es = null; snap = null; session = null; localStorage.removeItem('booty-session'); }
 function setSession(r) { session = { code: r.code, token: r.token }; localStorage.setItem('booty-session', JSON.stringify(session)); connect(); }
 
